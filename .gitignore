@@ -1,0 +1,8 @@
+# Nextflow
+nextflow
+*.nextflow.*
+work/
+.nextflow/
+
+#params
+params_file.yaml
