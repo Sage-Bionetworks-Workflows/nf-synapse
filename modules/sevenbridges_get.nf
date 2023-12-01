@@ -3,17 +3,19 @@ process SEVENBRIDGES_GET {
 
   container "quay.io/biocontainers/sevenbridges-python:2.9.1--pyhdfd78af_0"
 
-  publishDir "${outdir}/${sbg_id}/", mode: 'copy'
+  publishDir "${params.outdir_clean}/${sbg_id}/", mode: 'copy'
 
   secret 'SB_API_ENDPOINT'
   secret 'SB_AUTH_TOKEN'
 
   input:
   tuple val(sbg_uri), val(sbg_id)
-  val outdir
 
   output:
   tuple val(sbg_uri), val(sbg_id), path("*")
+
+  when:
+  params.sbg_uris.size() > 0
 
   script:
   """

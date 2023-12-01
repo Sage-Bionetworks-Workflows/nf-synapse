@@ -1,13 +1,15 @@
 // Download files from Synapse
 process SYNAPSE_GET {
 
-  publishDir "${outdir}/${syn_id}/", mode: 'copy'
+  publishDir "${params.outdir_clean}/${syn_id}/", mode: 'copy'
 
   secret 'SYNAPSE_AUTH_TOKEN'
 
   input:
   tuple val(syn_uri), val(syn_id)
-  val outdir
+
+  when:
+  params.synapse_uris.size() > 0
 
   output:
   tuple val(syn_uri), val(syn_id), path("*")
