@@ -13,6 +13,7 @@ input_file = file(params.input, checkIfExists: true)
 workdir = "${workDir.parent}/${workDir.name}"
 params.outdir = "${workDir.scheme}://${workdir}/synstage/"
 params.outdir_clean = params.outdir.replaceAll('/$', '')
+params.input_parent_dir = input_file.parent
 // Parse Synapse URIs from input file
 params.synapse_uris = (input_file.text =~ 'syn://(syn[0-9]+)').findAll()    
 // Parse SBG URIs from input file
@@ -42,24 +43,24 @@ workflow SYNSTAGE {
     // SBG channel
     ch_sbg_ids = Channel.fromList(params.sbg_uris).unique() // channel: [ sbg://63b717559fd1ad5d228550a0, 63b717559fd1ad5d228550a0]
 
-    // Workflow Metadata
-    params.name = workflow.runName
-    run_name = params.name
-
     // Get files
     SYNAPSE_GET(ch_synapse_ids)
     SEVENBRIDGES_GET(ch_sbg_ids)
 
     // Mix channels
     ch_all_files = SEVENBRIDGES_GET.output.mix(SYNAPSE_GET.output)
+    
     // Convert Mixed URIs and staged locations into sed expressions
     ch_stage_sed = ch_all_files
     .map { uri, id, file -> /-e 's|\b${uri}\b|${params.outdir_clean}\/${id}\/${file.name}|g'/ }
     .reduce { a, b -> "${a} ${b}" }
 
-    // Update input file with staged locations
-    UPDATE_INPUT(input_file, ch_stage_sed)
+    // Get Workflow Run Name for Publishing
+    params.name = workflow.runName
+    run_name = params.name
 
+    // Update input file with staged locations
+    UPDATE_INPUT(input_file, ch_stage_sed, run_name)
 }
 
 
