@@ -49,7 +49,7 @@ workflow SYNSTAGE {
 
     // Mix channels
     ch_all_files = SEVENBRIDGES_GET.output.mix(SYNAPSE_GET.output)
-    
+
     // Convert Mixed URIs and staged locations into sed expressions
     ch_stage_sed = ch_all_files
     .map { uri, id, file -> /-e 's|\b${uri}\b|${params.outdir_clean}\/${id}\/${file.name}|g'/ }
@@ -62,8 +62,3 @@ workflow SYNSTAGE {
     // Update input file with staged locations
     UPDATE_INPUT(input_file, ch_stage_sed, run_name)
 }
-
-
-
-
-
