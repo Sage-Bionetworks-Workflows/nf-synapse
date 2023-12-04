@@ -4,5 +4,8 @@ nextflow
 work/
 .nextflow/
 
-#params
+# Params file
 params_file.yaml
+
+# Development directory for testing
+dev/*
