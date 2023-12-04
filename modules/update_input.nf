@@ -1,20 +1,22 @@
 // Update Synapse URIs in input file with staged locations
 process UPDATE_INPUT {
+  
+  publishDir "${input_file.scheme}:///${params.input_parent_dir}/synstage/",  mode: 'copy'
+  publishDir "${params.outdir_clean}/${run_name}/",          mode: 'copy'
 
-  publishDir "${input_file.scheme}://${input_file.parent}/synstage/",  mode: 'copy'
-  publishDir "${outdir}/${run_name}/",          mode: 'copy'
+  stageInMode 'copy'
 
   input:
-  path input_file
+  file input_file
   val exprs
-  tuple val(a), val(b), val(c)
+  val run_name
 
   output:
-  path "${input_file.name}"
+  path "${input_file}"
 
   script:
   """
-  sed -E ${exprs} ${input_file} > ${input_file.name}
+  cp ${input_file} input.txt
+  sed -E ${exprs} input.txt > ${input_file}
   """
-
-}
+} 
