@@ -33,10 +33,10 @@ workflow SYNSTAGE {
 
     // Warning if input file lacks URIs
     if (params.synapse_uris.size() == 0 && params.sbg_uris.size() == 0) {
-    message = "The input file (${params.input}) does not contain any Synapse " +
-                "URIs (e.g., syn://syn98765432) or SevenBridges URIs " +
-                "(e.g., sbg://63b717559fd1ad5d228550a0). Is this expected?"
-    log.warn(message)
+        message = "The input file (${params.input}) does not contain any Synapse " +
+                    "URIs (e.g., syn://syn98765432) or SevenBridges URIs " +
+                    "(e.g., sbg://63b717559fd1ad5d228550a0). Is this expected?"
+        log.warn(message)
     }
 
     // Synapse channel
