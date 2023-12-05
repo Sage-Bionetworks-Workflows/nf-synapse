@@ -1,4 +1,4 @@
-// Download files from SevenBridges
+// Download files from Seven Bridges
 process SEVENBRIDGES_GET {
 
   container "quay.io/biocontainers/sevenbridges-python:2.9.1--pyhdfd78af_0"
