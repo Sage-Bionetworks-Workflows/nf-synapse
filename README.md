@@ -105,6 +105,8 @@ Check out the [Quickstart](#quickstart) section for example parameter values.
 
 - **`outdir`**: (Optional) An output location where the Synapse files will be staged. Currently, this location must be an S3 prefix for Nextflow Tower runs. If not provided, this will default to the parent directory of the input file.
 
+- **`simple_stage`**: (Optional) A boolean indicating whether to stage files using a simple folder structure. If `true`, files will be staged in the `outdir`. If `false`, files will be staged in child folders named after the Synapse or Seven Bridges ID of the file. If not provided, this will default to `false`.
+
 ### Known Limitations
 
 - The only way for the workflow to download Synapse files is by listing Synapse URIs in a file. You cannot provide a list of Synapse IDs or URIs to a parameter.
