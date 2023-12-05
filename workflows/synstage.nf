@@ -18,6 +18,7 @@ params.input_parent_dir = input_file.parent
 params.synapse_uris = (input_file.text =~ 'syn://(syn[0-9]+)').findAll()    
 // Parse SBG URIs from input file
 params.sbg_uris = (input_file.text =~ 'sbg://([a-zA-Z0-9]+)').findAll()
+
 /*
 ========================================================================================
     IMPORT MODULES
@@ -30,7 +31,7 @@ include { UPDATE_INPUT } from '../modules/update_input.nf'
 
 workflow SYNSTAGE {
 
-    // Warning about input file lacking URIs
+    // Warning if input file lacks URIs
     if (params.synapse_uris.size() == 0 && params.sbg_uris.size() == 0) {
     message = "The input file (${params.input}) does not contain any Synapse " +
                 "URIs (e.g., syn://syn98765432) or SevenBridges URIs " +
@@ -40,10 +41,11 @@ workflow SYNSTAGE {
 
     // Synapse channel
     ch_synapse_ids = Channel.fromList(params.synapse_uris).unique() // channel: [ syn://syn98765432, syn98765432 ]
+
     // SBG channel
     ch_sbg_ids = Channel.fromList(params.sbg_uris).unique() // channel: [ sbg://63b717559fd1ad5d228550a0, 63b717559fd1ad5d228550a0]
 
-    // Get files
+    // Stage files
     SYNAPSE_GET(ch_synapse_ids)
     SEVENBRIDGES_GET(ch_sbg_ids)
 
