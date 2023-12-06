@@ -14,7 +14,7 @@ workdir = "${workDir.parent}/${workDir.name}"
 params.outdir = "${workDir.scheme}://${workdir}/synstage/"
 params.outdir_clean = params.outdir.replaceAll('/$', '')
 params.input_parent_dir = input_file.parent
-params.save_strategy = "default"
+params.save_strategy = "id_folders"
 // Parse Synapse URIs from input file
 params.synapse_uris = (input_file.text =~ 'syn://(syn[0-9]+)').findAll()    
 // Parse SBG URIs from input file

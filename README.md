@@ -106,8 +106,8 @@ Check out the [Quickstart](#quickstart) section for example parameter values.
 - **`outdir`**: (Optional) An output location where the Synapse files will be staged. Currently, this location must be an S3 prefix for Nextflow Tower runs. If not provided, this will default to the parent directory of the input file.
 
 - **`save_strategy`**: (Optional) A string indicating where to stage the files within the `outdir`. Options include:
-    - `default`: Files will be staged in child folders named after the Synapse or Seven Bridges ID of the file. This is the default behavior.
-    - `simple`: Files will be staged in top level of the `outdir`.
+    - `id_folders`: Files will be staged in child folders named after the Synapse or Seven Bridges ID of the file. This is the default behavior.
+    - `flat`: Files will be staged in top level of the `outdir`.
 
 ### Known Limitations
 
