@@ -1,7 +1,7 @@
 // Download files from Synapse
 process SYNAPSE_GET {
 
-  publishDir params.simple_stage ? "${params.outdir_clean}/" : "${params.outdir_clean}/${syn_id}/", mode: 'copy'
+  publishDir "${Utils.get_publish_dir(params, syn_id)}", mode: 'copy'
 
   secret 'SYNAPSE_AUTH_TOKEN'
 
