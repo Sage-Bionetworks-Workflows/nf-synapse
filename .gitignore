@@ -1,0 +1,11 @@
+# Nextflow
+nextflow
+*.nextflow.*
+work/
+.nextflow/
+
+# Params file
+params_file.yaml
+
+# Development directory for testing
+dev/*
