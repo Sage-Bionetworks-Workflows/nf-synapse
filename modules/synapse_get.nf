@@ -1,5 +1,6 @@
 // Download files from Synapse
 process SYNAPSE_GET {
+  label 'synapse'
 
   publishDir "${Utils.get_publish_dir(params, syn_id)}", mode: 'copy'
 

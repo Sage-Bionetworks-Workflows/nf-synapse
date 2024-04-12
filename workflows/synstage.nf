@@ -30,6 +30,12 @@ include { SYNAPSE_GET } from '../modules/synapse_get.nf'
 include { SEVENBRIDGES_GET } from '../modules/sevenbridges_get.nf'
 include { UPDATE_INPUT } from '../modules/update_input.nf'
 
+/*
+========================================================================================
+    WORFLOW DEFINITION
+========================================================================================
+*/
+
 workflow SYNSTAGE {
 
     // Warning if input file lacks URIs
