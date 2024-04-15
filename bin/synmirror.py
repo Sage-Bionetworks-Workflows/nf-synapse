@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 
-# Import packages
-import argparse
 import os
 import sys
+
 import synapseclient
-
 from synapseclient.models import Folder
+import pandas as pd
 
 
-# helper function for creating folders
 def _create_folder(name: str, parent_id: str) -> str:
-    folder = Folder(name=name, parentId=parent_id).store()
+    folder = Folder(name=name, parent_id=parent_id).store()
     return folder.id
 
 
@@ -20,6 +18,8 @@ def _create_folder(name: str, parent_id: str) -> str:
 def mirror_folder_structure(objects: str, s3_prefix: str, parent_id: str) -> None:
     s3_prefix = s3_prefix.rstrip("/") + "/"
     mapping = {s3_prefix: parent_id}
+    object_uri_list = []
+    folder_id_list = []
     with open(objects, "r") as infile:
         for line in infile:
             object_uri = line.rstrip()
@@ -35,7 +35,10 @@ def mirror_folder_structure(objects: str, s3_prefix: str, parent_id: str) -> Non
                 if folder_uri not in mapping:
                     folder_id = _create_folder(folder, parent_id)
                     mapping[folder_uri] = folder_id
-            print(f"{object_uri},{mapping[folder_uri]}")
+            object_uri_list.append(object_uri)
+            folder_id_list.append(mapping[folder_uri])
+    df = pd.DataFrame({"object_uri": object_uri_list, "folder_id": folder_id_list})
+    df.to_csv("parent_ids.csv", index=False)
 
 
 if __name__ == "__main__":

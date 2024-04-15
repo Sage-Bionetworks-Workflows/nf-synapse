@@ -1,5 +1,3 @@
-#!/usr/bin/env nextflow
-
 // Ensure DSL2
 nextflow.enable.dsl = 2
 

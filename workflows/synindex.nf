@@ -1,5 +1,3 @@
-#!/usr/bin/env nextflow
-
 // Ensure DSL2
 nextflow.enable.dsl = 2
 
@@ -12,7 +10,6 @@ nextflow.enable.dsl = 2
 // Default values
 params.s3_prefix = false
 params.parent_id = false
-params.synapse_config = false
 params.filename_string = false
 
 if ( !params.s3_prefix ) {
@@ -28,10 +25,10 @@ matches = ( params.s3_prefix =~ '^s3://([^/]+)(?:/+([^/]+(?:/+[^/]+)*)/*)?$' ).f
 if ( matches.size() == 0 ) {
   exit 1, "Parameter 'params.s3_prefix' must be an S3 URI (e.g., 's3://bucket-name/some/prefix/')!\n"
 } else {
-  bucket_name = matches[0][1]
+  bucket = matches[0][1]
   base_key = matches[0][2]
   base_key = base_key ?: '/'
-  s3_prefix = "s3://${bucket_name}/${base_key}"  // Ensuring common format
+  s3_prefix = "s3://${bucket}/${base_key}"  // Ensuring common format
 }
 
 if ( !params.parent_id ==~ 'syn[0-9]+' ) {
@@ -40,106 +37,32 @@ if ( !params.parent_id ==~ 'syn[0-9]+' ) {
 
 publish_dir = "${s3_prefix}/synindex/under-${params.parent_id}/"
 
+/*
+========================================================================================
+    IMPORT MODULES
+========================================================================================
+*/
+
+include { GET_USER_ID } from '../modules/get_user_id.nf'
+include { UPDATE_OWNER } from '../modules/update_owner.nf'
+include { REGISTER_BUCKET } from '../modules/register_bucket.nf'
+include { LIST_OBJECTS } from '../modules/list_objects.nf'
 
 /*
 ========================================================================================
     WORKFLOW DEFINITION
 ========================================================================================
 */
-process GET_USER_ID {
-  
-  label 'synapse'
-
-  cache false
-
-  secret 'SYNAPSE_AUTH_TOKEN'
-
-  output:
-  env user_id
-
-  script:
-  """
-  user_id=\$(get_user_id.py)
-  """
-
-}
-
-process UPDATE_OWNER {
-  
-  label 'aws'
-
-  input:
-  val user_id
-  val s3_prefix
-
-  output:
-  val "ready"
-
-  script:
-  """
-  ( \
-     ( aws s3 cp ${s3_prefix}/owner.txt - 2>/dev/null || true ); \
-      echo $user_id \
-  ) \
-  | sort -u \
-  | aws s3 cp - ${s3_prefix}/owner.txt
-  """
-
-}
-
-process REGISTER_BUCKET {
-  
-  label 'synapse'
-
-  secret 'SYNAPSE_AUTH_TOKEN'
-
-  input:
-  val   bucket
-  val   base_key
-  val   ready
-
-  output:
-  env storage_location_id
-
-  script:
-  """
-  storage_location_id=\$(register_bucket.py ${bucket} ${base_key})
-  """
-
-}
-
-process LIST_OBJECTS {
-
-  label 'aws'
-
-  input:
-  val s3_prefix
-  val bucket
-  val filename_string
-  
-  output:
-  path 'objects.txt'
-
-  script:
-  """
-  aws s3 ls ${s3_prefix}/ --recursive \
-  | grep -v -e '/\$' -e 'synindex/under-' -e 'owner.txt\$' \
-    -e 'synapseConfig' -e 'synapse_config' \
-  | awk '{\$1=\$2=\$3=""; print \$0}' \
-  | sed 's|^   |s3://${bucket}/|' \
-  ${filename_string ? "| grep '${filename_string}'" : ""} \
-  > objects.txt
-  """
-  
-}
 
 process SYNAPSE_MIRROR {
-  
+  debug true
   label 'synapse'
 
   secret 'SYNAPSE_AUTH_TOKEN'
 
+  //does not work locally
   publishDir publish_dir, mode: 'copy'
+  
 
   input:
   path  objects
@@ -150,30 +73,11 @@ process SYNAPSE_MIRROR {
   path  'parent_ids.csv'
 
   script:
-  config_cli_arg = params.synapse_config ? "--config ${syn_config}" : ""
   """
-  synmirror.py ${objects} ${s3_prefix} ${parent_id} > parent_ids.csv
+  synmirror.py ${objects} ${s3_prefix} ${parent_id}
   """
 
 }
-
-workflow synindex {
-  GET_USER_ID()
-  UPDATE_OWNER(GET_USER_ID.output, s3_prefix)
-  REGISTER_BUCKET(bucket, base_key, UPDATE_OWNER.output)
-  LIST_OBJECTS(s3_prefix, bucket, params.filename_string)
-  SYNAPSE_MIRROR(LIST_OBJECTS.output, s3_prefix, parent_id)
-  // Parse list of object URIs and their Synapse parents
-  ch_parent_ids_csv
-    .text
-    .splitCsv()
-    .map { row -> [ row[0], file(row[0]), row[1] ] }
-    .set { ch_parent_ids }
-}
-
-
-
-
 
 process SYNAPSE_INDEX {
   
@@ -181,27 +85,44 @@ process SYNAPSE_INDEX {
 
   secret 'SYNAPSE_AUTH_TOKEN'
 
-
   input:
   tuple val(uri), file(object), val(parent_id)
   val   storage_id
 
   output:
-  stdout ch_file_ids
+  env file_info
 
   script:
-  config_cli_arg = params.synapse_config ? "--config ${syn_config}" : ""
   """
-  synindex.py \
-  --storage_id ${storage_id} \
-  --file ${object} \
-  --uri '${uri}' \
-  --parent_id ${parent_id} \
-  ${config_cli_arg}
+  file_info=\$(synindex.py ${storage_id} ${object} '${uri}' ${parent_id})
   """
 
 }
 
+workflow SYNINDEX {
+  GET_USER_ID()
+  GET_USER_ID.output.view()
+  UPDATE_OWNER(GET_USER_ID.output, s3_prefix)
+  UPDATE_OWNER.output.view()
+  REGISTER_BUCKET(bucket, base_key, UPDATE_OWNER.output)
+  REGISTER_BUCKET.output.view()
+  LIST_OBJECTS(s3_prefix, bucket, params.filename_string)
+  LIST_OBJECTS.output.view()
+  SYNAPSE_MIRROR(LIST_OBJECTS.output, s3_prefix, params.parent_id)
+  SYNAPSE_MIRROR.output.view()
+  ch_parent_ids = SYNAPSE_MIRROR.output 
+        .splitCsv(header:true) 
+        .map { row -> tuple(row.object_uri, file(row.object_uri), row.folder_id) }
+  ch_parent_ids.view()
+  ch_file_ids = SYNAPSE_INDEX(ch_parent_ids, REGISTER_BUCKET.output)
+  ch_file_ids
+    .collectFile(name: "file_ids.csv", storeDir: publish_dir, newLine: true)
+}
 
-ch_file_ids
-  .collectFile(name: "file_ids.csv", storeDir: publish_dir, newLine: true)
+
+
+
+
+
+
+

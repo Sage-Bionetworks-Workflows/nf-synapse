@@ -26,7 +26,7 @@ def clean_file_name(file: str) -> str:
 
 def create_file_handle(
     syn: synapseclient.Synapse,
-    storage_id: str,
+    # storage_id: str,
     uri: str,
     file_name: str,
     parent: str,
@@ -38,7 +38,7 @@ def create_file_handle(
         s3_file_key=key,
         file_path=file_name,
         parent=parent,
-        storage_location_id=storage_id,
+        # storage_location_id=storage_id,
         md5=md5_checksum,
     )
     return file_handle["id"]
@@ -68,7 +68,7 @@ if __name__ == "__main__":
 
     file_handle_id = create_file_handle(
         syn=syn,
-        storage_id=storage_id,
+        # storage_id=storage_id,
         uri=uri,
         file_name=file_name,
         parent=parent_id,
