@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-# Import packages
 import hashlib
 import os
 import re
@@ -30,7 +29,6 @@ def create_file_handle(
     storage_id: str,
     uri: str,
     file_name: str,
-    # parent: str,
     md5_checksum: str,
 ) -> str:
     bucket, key = re.fullmatch(r"s3://([^/]+)/(.*)", uri).groups()
@@ -38,7 +36,6 @@ def create_file_handle(
         bucket_name=bucket,
         s3_file_key=key,
         file_path=file_name,
-        # parent=parent,
         storage_location_id=storage_id,
         md5=md5_checksum,
     )
@@ -72,7 +69,6 @@ if __name__ == "__main__":
         storage_id=storage_id,
         uri=uri,
         file_name=file_name,
-        # parent=parent_id,
         md5_checksum=md5_checksum,
     )
 
