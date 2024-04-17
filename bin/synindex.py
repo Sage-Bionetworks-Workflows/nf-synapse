@@ -22,6 +22,7 @@ def compute_md5_checksum(file: str) -> str:
 def clean_file_name(file: str) -> str:
     filename = os.path.basename(file)
     filename = re.sub(r"[^A-Za-z0-9 _.+'()-]", "_", filename)
+    return filename
 
 
 def create_file_handle(
@@ -65,7 +66,6 @@ if __name__ == "__main__":
 
     md5_checksum = compute_md5_checksum(file=file)
     file_name = clean_file_name(file=file)
-
     file_handle_id = create_file_handle(
         syn=syn,
         # storage_id=storage_id,
