@@ -25,7 +25,7 @@ def create_storage_location(
         bucket=bucket,
         baseKey=base_key,
     )
-    storage_location_id = storage_location["id"]
+    storage_location_id = storage_location["storageLocationId"]
     return storage_location_id
 
 
