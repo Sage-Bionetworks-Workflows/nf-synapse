@@ -32,7 +32,6 @@ def create_storage_location(
 if __name__ == "__main__":
     bucket = sys.argv[1]
     base_key = sys.argv[2]
-    parent_id = sys.argv[3]
     syn = synapseclient.Synapse()
     syn.login(silent=True)
     storage_location_id = create_storage_location(
