@@ -45,9 +45,10 @@ def create_file_handle(
     return file_handle["id"]
 
 
-def store_file(file_name: str, parent_id: str, file_handle_id: str) -> File:
+def store_file(file_name: str, path: str, parent_id: str, file_handle_id: str) -> File:
     file = File(
         name=file_name,
+        path=path,
         parent_id=parent_id,
         data_file_handle_id=file_handle_id,
     )
@@ -76,7 +77,10 @@ if __name__ == "__main__":
     )
 
     file = store_file(
-        file_name=file_name, parent_id=parent_id, file_handle_id=file_handle_id
+        file_name=file_name,
+        path=file,
+        parent_id=parent_id,
+        file_handle_id=file_handle_id,
     )
 
     print(f"{uri},{file.id}", end="")
