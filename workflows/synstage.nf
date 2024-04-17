@@ -6,8 +6,9 @@ nextflow.enable.dsl = 2
     SETUP PARAMS
 ========================================================================================
 */
-
-input_file = file(params.input, checkIfExists: true)
+// Need default file or Synindex cannot be run
+params.input = "dummy.txt"
+input_file = file(params.input)
 workdir = "${workDir.parent}/${workDir.name}"
 params.outdir = "${workDir.scheme}://${workdir}/synstage/"
 params.outdir_clean = params.outdir.replaceAll('/$', '')
