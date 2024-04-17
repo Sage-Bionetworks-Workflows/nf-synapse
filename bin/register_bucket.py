@@ -6,7 +6,7 @@ import sys
 import synapseclient
 
 
-def get_storage_location_id(
+def create_storage_location(
     syn: synapseclient.Synapse, bucket: str, base_key: str
 ) -> str:
     destination = {
@@ -24,5 +24,5 @@ if __name__ == "__main__":
     base_key = sys.argv[2]
     syn = synapseclient.Synapse()
     syn.login(silent=True)
-    storage_location_id = get_storage_location_id(syn, bucket, base_key)
+    storage_location_id = create_storage_location(syn, bucket, base_key)
     print(storage_location_id, end="")
