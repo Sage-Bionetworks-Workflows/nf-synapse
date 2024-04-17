@@ -3,9 +3,19 @@
 import synapseclient
 
 
-def get_user_id(syn: synapseclient.Synapse) -> None:
+def get_user_id(syn: synapseclient.Synapse) -> int:
+    """Returns the Synapse user ID of the user who is logged in.
+
+    Arguments:
+        syn: Synapse client object
+
+    Returns:
+        user_id: Synapse user ID
+    """
+
     user = syn.getUserProfile()
-    return user.ownerId
+    user_id = user.ownerId
+    return user_id
 
 
 if __name__ == "__main__":
