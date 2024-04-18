@@ -1,4 +1,5 @@
 // Makes current Synapse user owner of Storage Location
+// Creates owner.txt if it doesn't already exist
 process UPDATE_OWNER {
   label 'aws'
 

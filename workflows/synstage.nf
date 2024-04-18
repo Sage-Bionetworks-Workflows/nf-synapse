@@ -6,7 +6,7 @@ nextflow.enable.dsl = 2
     SETUP PARAMS
 ========================================================================================
 */
-// Need default file or Synindex cannot be run
+// Need default file or NF_SYNINDEX cannot be run
 params.input = "${projectDir}/dummy.txt"
 input_file = file(params.input)
 workdir = "${workDir.parent}/${workDir.name}"
