@@ -9,6 +9,7 @@ import synapseclient
 from synapseclient.models import File
 
 
+# TODO: swap this for `md5_for_file_hex` in synapseclient V4.2.0
 def compute_md5_checksum(file: str) -> str:
     """Computes the hexadecimal MD5 checksum of a file.
     Args:
