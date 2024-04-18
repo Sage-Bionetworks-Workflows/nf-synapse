@@ -3,9 +3,9 @@
 import os
 import sys
 
+import pandas as pd
 import synapseclient
 from synapseclient.models import Folder
-import pandas as pd
 
 
 # TODO add this functionality to synapseclient

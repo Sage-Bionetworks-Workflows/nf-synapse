@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 
-import hashlib
 import os
 import re
 import sys
 
 import synapseclient
-from synapseclient.models import File
 from synapseclient.core.utils import md5_for_file_hex
+from synapseclient.models import File
 
 
 def clean_file_name(file: str) -> str:
