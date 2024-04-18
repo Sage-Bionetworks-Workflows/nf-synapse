@@ -175,3 +175,7 @@ Check out the [Quickstart](#Quickstart:SYNINDEX) section for example parameter v
 - **`s3_prefix`**: (Required) The S3 URI of the S3 bucket that contains the files to be indexed.
 - **`parent_id`**: (Required) The Synapse ID of the Synapse project or folder that the files will be indexed into.
 - **`filename_string`**: (Optional) A string that will be matched against the names of the files in the S3 bucket. If provided, only files that contain the string will be indexed.
+
+### Known Limitations
+
+At present, it is not possible for `NF_SYNINDEX` to be run outside of Nextflow Tower. This is due to AWS permissions complications. [Future work](https://sagebionetworks.jira.com/browse/IBCDPE-910) will include enabling the workflow to run on local machines/in virtual machines. 
