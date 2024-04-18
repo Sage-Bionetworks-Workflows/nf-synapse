@@ -6,7 +6,10 @@ nextflow.enable.dsl = 2
     SETUP PARAMS
 ========================================================================================
 */
+// Placeholder values
 params.filename_string = false
+params.s3_prefix = "s3://bucket-name/key/"
+params.parent_id = "syn12345678"
 
 matches = ( params.s3_prefix =~ '^s3://([^/]+)(?:/+([^/]+(?:/+[^/]+)*)/*)?$' ).findAll()
 
