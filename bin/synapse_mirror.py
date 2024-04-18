@@ -8,21 +8,6 @@ from synapseclient.models import Folder
 import pandas as pd
 
 
-def _create_folder(name: str, parent_id: str) -> str:
-    """Helper function to create a folder in Synapse.
-
-    Args:
-        name: Name of the folder to create.
-        parent_id: Synapse ID of the parent location.
-
-    Returns:
-        folder_id: Synapse ID of the newly created folder.
-    """
-    folder = Folder(name=name, parent_id=parent_id).store()
-    folder_id = folder.id
-    return folder_id
-
-
 # TODO add this functionality to synapseclient
 # https://sagebionetworks.jira.com/browse/SYNPY-1463
 def mirror_folder_structure(objects_file: str, s3_prefix: str, parent_id: str) -> None:
@@ -50,7 +35,7 @@ def mirror_folder_structure(objects_file: str, s3_prefix: str, parent_id: str) -
                 parent_id = mapping[folder_uri]
                 folder_uri += f"{folder}/"
                 if folder_uri not in mapping:
-                    folder_id = _create_folder(folder, parent_id)
+                    folder_id = Folder(name=folder, parent_id=parent_id).store().id
                     mapping[folder_uri] = folder_id
             object_uri_list.append(object_uri)
             folder_id_list.append(mapping[folder_uri])
