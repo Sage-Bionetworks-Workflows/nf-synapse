@@ -1,12 +1,27 @@
 #!/usr/bin/env python3
 
+import hashlib
 import os
 import re
 import sys
 
 import synapseclient
-from synapseclient.core.utils import md5_for_file
 from synapseclient.models import File
+
+
+def compute_md5_checksum(file: str) -> str:
+    """Computes the hexadecimal MD5 checksum of a file.
+    Args:
+        file: Name of the file.
+    Returns:
+        checksum: MD5 checksum of the file.
+    """
+    hash_md5 = hashlib.md5()
+    with open(file, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    checksum = hash_md5.hexdigest()
+    return checksum
 
 
 def clean_file_name(file: str) -> str:
@@ -62,7 +77,7 @@ if __name__ == "__main__":
     syn = synapseclient.Synapse()
     syn.login(silent=True)
 
-    md5_checksum = md5_for_file(filename=file)
+    md5_checksum = compute_md5_checksum(file=file)
     file_name = clean_file_name(file=file)
     file_handle_id = create_file_handle(
         syn=syn,
