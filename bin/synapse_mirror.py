@@ -11,7 +11,7 @@ from synapseclient.models import Folder
 # TODO add this functionality to synapseclient
 # https://sagebionetworks.jira.com/browse/SYNPY-1463
 def mirror_folder_structure(objects_file: str, s3_prefix: str, parent_id: str) -> None:
-    """Mirrors the folder structure of an S3 bucket within a Synapse parent location.
+    """Recreates the folder structure of an S3 bucket within a Synapse parent location.
 
     Arguments:
         objects_file: Name of the file containing the object URIs.
