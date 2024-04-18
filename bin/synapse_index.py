@@ -5,7 +5,7 @@ import re
 import sys
 
 import synapseclient
-from synapseclient.core.utils import md5_for_file_hex
+from synapseclient.core.utils import md5_fn
 from synapseclient.models import File
 
 
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     syn = synapseclient.Synapse()
     syn.login(silent=True)
 
-    md5_checksum = md5_for_file_hex(filename=file)
+    md5_checksum = md5_fn(filename=file)
     file_name = clean_file_name(file=file)
     file_handle_id = create_file_handle(
         syn=syn,
