@@ -11,7 +11,7 @@ The purpose of this repository is to provide a collection of Nextflow workflows 
 This repository is organized as follows:
 1. Individual process definitions, or modules, are stored in the `modules/` directory.
 1. Modules are then combined into workflows, stored in the `workflows/` directory. These workflows are intended to capture the entire process of an interaction with Synapse.
-1. Workflows are then represented in the `main.nf` script, which provides an entrypoint for running each workflow.
+1. Workflows are then represented in the `main.nf` script, which provides an entrypoint for each workflow.
 
 ## Usage
 
@@ -22,6 +22,17 @@ In the example below, we provide the `entry` parameter `NF_SYNSTAGE` to indicate
 ```
 nextflow run main.nf -profile docker -entry NF_SYNSTAGE --input path/to/input.csv
 ```
+
+## Meta-Usage
+
+`NF_SYNAPSE` is designed to be used on either side of a general-purpose Nextflow Workflow to stage input files from Synapse/SevenBridges to an S3 bucket, run a workflow of your choosing, and then index the output files from the S3 bucket back into Synapse. 
+
+```Mermaid
+flowchart LR;
+A[NF_SYNAPSE:NF_SYNSTAGE]-->B[WORKFLOW]-->C[NF_SYNAPSE:NF_SYNINDEX];
+```
+
+See [`demo.py`](https://github.com/Sage-Bionetworks-Workflows/py-orca/blob/main/demo.py) in `Sage-Bionetworks-Workflows/py-orca` for an example of accomplishing this goal with Python code.
 
 ## Authentication
 
@@ -43,18 +54,18 @@ Current `profiles` included in this repository are:
 
 ### Purpose
 
-The purpose of this workflow is to automate the process of staging Synapse and SevenBridges files to an accessible location (_e.g._ an S3 bucket). In turn, these staged files can be used as input for a general-purpose (_e.g._ nf-core) workflow that doesn't contain platform-specific steps for downloading data. This workflow is intended to be run first in preparation for other data processing workflows.
+The purpose of this workflow is to automate the process of staging Synapse and SevenBridges files to a Nextflow Tower-accessible location (_e.g._ an S3 bucket). In turn, these staged files can be used as input for a general-purpose (_e.g._ nf-core) workflow that doesn't contain platform-specific steps for staging data. This workflow is intended to be run first in preparation for other data processing workflows.
 
 ### Overview
 
-`NF_SYNSTAGE` achieves its purpose by performing the following steps:
+`NF_SYNSTAGE` performs the following steps:
 
 1. Extract all Synapse and SevenBridges URIs (_e.g._ `syn://syn28521174` or `sbg://63b717559fd1ad5d228550a0`) from a given text file.
 1. Download the corresponding files from both platforms in parallel.
 1. Replace the URIs in the text file with their staged locations.
 1. Output the updated text file so it can serve as input for another workflow.
 
-### Quickstart
+### Quickstart:SYNSTAGE
 
 The examples below demonstrate how you would stage Synapse files in an S3 bucket called `example-bucket`, but they can be adapted for other storage backends.
 
@@ -99,7 +110,7 @@ Note: `NF_SYNSTAGE` can handle either or both types of URIs in a single input fi
 
 ### Parameters
 
-Check out the [Quickstart](#quickstart) section for example parameter values.
+Check out the [Quickstart](#Quickstart:SYNSTAGE) section for example parameter values.
 
 - **`input`**: (Required) A text file containing Synapse URIs (_e.g._ `syn://syn28521174`). The text file can have any format (_e.g._ a single column of Synapse URIs, a CSV/TSV sample sheet for an nf-core workflow).
 
@@ -113,3 +124,58 @@ Check out the [Quickstart](#quickstart) section for example parameter values.
 
 - The only way for the workflow to download Synapse files is by listing Synapse URIs in a file. You cannot provide a list of Synapse IDs or URIs to a parameter.
 - The workflow doesn't check if newer versions exist for the files associated with the Synapse URIs. If you need to force-download a newer version, you should manually delete the staged version.
+
+## `NF_SYNINDEX`: Index S3 Objects Into Synapse
+
+### Purpose
+
+The purpose of this workflow is to automate the process of indexing files in an S3 bucket into Synapse. `NF_SYNINDEX` is intended to be used after a general-purpose (_e.g._ nf-core) workflow that doesn't contain platform-specific steps for uploading/indexing data. 
+
+### Overview
+
+`NF_SYNINDEX` performs the following steps:
+
+1. Gets the Synapse user ID for the account that provided the `SYNAPSE_AUTH_TOKEN` secret.
+1. Updates or creates the `owner.txt` file in the S3 bucket to make the current user an owner.
+1. Registers the S3 bucket as an external storage location for Synapse.
+1. Generates a list of all of the objects in the S3 bucket to be indexed.
+1. Recreates the folder structure of the S3 bucket in the Synapse project.
+1. Indexes the files in the S3 bucket into the Synapse project.
+
+### Quickstart:SYNINDEX
+
+The examples below demonstrate how you would index files from an S3 bucket called `example-bucket` into Synapse.
+
+1. Prepare your S3 bucket by setting the output directory of your general-purpose workflow to a Nextflow Tower S3 bucket. Ideally, you want this S3 bucket to be persistent (not a `scratch` bucket) so that your files will remain accessible indefinitely.
+
+    **Example:** `s3://example-bucket` file structure:
+    ```
+    example-dev-project-tower-bucket
+    ├── child_folder
+    ├── test.txt
+    │   ├── child_child_folder
+    │   │   └── test2.txt
+    │   ├── test1.txt
+    ```
+
+1. Launch workflow using the [Nextflow CLI](https://nextflow.io/docs/latest/cli.html#run), the [Tower CLI](https://help.tower.nf/latest/cli/), or the [Tower web UI](https://help.tower.nf/latest/launch/launchpad/).
+
+    **Example:** Launched using the Nextflow CLI
+
+    ```console
+    nextflow run main.nf -profile docker -entry NF_SYNINDEX --s3_prefix s3://example-bucket --parent_id syn12345678
+    ```
+
+1. Retrieve the output file, which by default is stored in a `S3://example-bucket/synindex/under-syn12345678/` in our example. This folder will contain a mapping of Synapse URIs to their indexed Synapse IDs.
+
+### Parameters
+
+Check out the [Quickstart](#Quickstart:SYNINDEX) section for example parameter values.
+
+- **`s3_prefix`**: (Required) The S3 URI of the S3 bucket that contains the files to be indexed.
+- **`parent_id`**: (Required) The Synapse ID of the Synapse project or folder that the files will be indexed into.
+- **`filename_string`**: (Optional) A string that will be matched against the names of the files in the S3 bucket. If provided, only files that contain the string will be indexed.
+
+### Known Limitations
+
+At present, it is not possible for `NF_SYNINDEX` to be run outside of Nextflow Tower. This is due to AWS permissions complications. [Future work](https://sagebionetworks.jira.com/browse/IBCDPE-910) will include enabling the workflow to run on local machines/in virtual machines. 

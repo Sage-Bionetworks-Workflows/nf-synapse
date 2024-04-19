@@ -1,5 +1,3 @@
-#!/usr/bin/env nextflow
-
 // Ensure DSL2
 nextflow.enable.dsl = 2
 
@@ -8,8 +6,9 @@ nextflow.enable.dsl = 2
     SETUP PARAMS
 ========================================================================================
 */
-
-input_file = file(params.input, checkIfExists: true)
+// Need default file or NF_SYNINDEX cannot be run
+params.input = "${projectDir}/dummy.txt"
+input_file = file(params.input)
 workdir = "${workDir.parent}/${workDir.name}"
 params.outdir = "${workDir.scheme}://${workdir}/synstage/"
 params.outdir_clean = params.outdir.replaceAll('/$', '')
@@ -29,6 +28,12 @@ params.sbg_uris = (input_file.text =~ 'sbg://([a-zA-Z0-9]+)').findAll()
 include { SYNAPSE_GET } from '../modules/synapse_get.nf'
 include { SEVENBRIDGES_GET } from '../modules/sevenbridges_get.nf'
 include { UPDATE_INPUT } from '../modules/update_input.nf'
+
+/*
+========================================================================================
+    WORFLOW DEFINITION
+========================================================================================
+*/
 
 workflow SYNSTAGE {
 
