@@ -1,40 +1,24 @@
 #!/usr/bin/env python3
 
-import hashlib
 import os
 import re
 import sys
 
 import synapseclient
 from synapseclient.models import File
+from synapseclient.core.utils import md5_for_file_hex
 
 
-# TODO: swap this for `md5_for_file_hex` in synapseclient V4.2.0
-def compute_md5_checksum(file: str) -> str:
-    """Computes the hexadecimal MD5 checksum of a file.
-    Args:
-        file: Name of the file.
-    Returns:
-        checksum: MD5 checksum of the file.
-    """
-    hash_md5 = hashlib.md5()
-    with open(file, "rb") as f:
-        for chunk in iter(lambda: f.read(4096), b""):
-            hash_md5.update(chunk)
-    checksum = hash_md5.hexdigest()
-    return checksum
-
-
-def clean_file_name(file: str) -> str:
+def clean_file_name(file_path: str) -> str:
     """Cleans the file name by replacing special characters and spaces with underscores.
 
     Arguments:
-        file: Name of the file.
+        file_path: Path to the file.
 
     Returns:
         filename: Clean file name.
     """
-    file_name = os.path.basename(file)
+    file_name = os.path.basename(file_path)
     clean_file_name = re.sub(r"[^A-Za-z0-9 _.+'()-]", "_", file_name)
     return clean_file_name
 
@@ -71,15 +55,15 @@ def create_file_handle(
 
 if __name__ == "__main__":
     storage_id = sys.argv[1]
-    file = sys.argv[2]
+    file_path = sys.argv[2]
     uri = sys.argv[3]
     parent_id = sys.argv[4]
 
     syn = synapseclient.Synapse()
     syn.login(silent=True)
 
-    md5_checksum = compute_md5_checksum(file=file)
-    file_name = clean_file_name(file=file)
+    md5_checksum = md5_for_file_hex(filename=file_path)
+    file_name = clean_file_name(file_path=file_path)
     file_handle_id = create_file_handle(
         syn=syn,
         storage_id=storage_id,
@@ -89,7 +73,7 @@ if __name__ == "__main__":
     )
     file = File(
         name=file_name,
-        path=file,
+        path=file_path,
         parent_id=parent_id,
         data_file_handle_id=file_handle_id,
     ).store()
