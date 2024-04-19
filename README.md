@@ -27,9 +27,10 @@ nextflow run main.nf -profile docker -entry NF_SYNSTAGE --input path/to/input.cs
 
 `NF_SYNAPSE` is designed to be used on either side of a general-purpose Nextflow Workflow to stage input files from Synapse/SevenBridges to an S3 bucket, run a workflow of your choosing, and then index the output files from the S3 bucket back into Synapse. 
 
-```Mermaid
+```mermaid
 flowchart LR;
-A[NF_SYNAPSE:NF_SYNSTAGE]-->B[WORKFLOW]-->C[NF_SYNAPSE:NF_SYNINDEX];
+   A[NF_SYNAPSE:NF_SYNSTAGE]-->B[WORKFLOW];
+   B-->C[NF_SYNAPSE:NF_SYNINDEX];
 ```
 
 See [`demo.py`](https://github.com/Sage-Bionetworks-Workflows/py-orca/blob/main/demo.py) in `Sage-Bionetworks-Workflows/py-orca` for an example of accomplishing this goal with Python code.
