@@ -76,5 +76,6 @@ if __name__ == "__main__":
         path=file_path,
         parent_id=parent_id,
         data_file_handle_id=file_handle_id,
+        content_md5=md5_checksum,
     ).store()
     print(f"{uri},{file.id}", end="")
