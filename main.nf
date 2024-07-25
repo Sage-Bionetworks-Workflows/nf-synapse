@@ -13,3 +13,28 @@ include { SYNINDEX } from './workflows/synindex.nf'
 workflow NF_SYNINDEX {
     SYNINDEX ()
 }
+
+process SAY_HELLO {
+
+    output: 
+        stdout
+    
+    """
+    echo 'Hello World!'
+    """
+}
+
+process SAY_HELLO_2 {
+
+    output: 
+        stdout
+    
+    """
+    echo 'Hello World 2!'
+    """
+}
+
+workflow NF_HELLO_WORLD {
+    SAY_HELLO()
+    SAY_HELLO_2()
+}
