@@ -8,7 +8,7 @@ nextflow.enable.dsl = 2
 */
 // Placeholder values
 params.filename_string = false
-params.s3_prefix = "s3://bucket-name/key/"
+params.s3_prefix = "s3://"
 params.parent_id = "syn12345678"
 
 matches = ( params.s3_prefix =~ '^s3://([^/]+)(?:/+([^/]+(?:/+[^/]+)*)/*)?$' ).findAll()
