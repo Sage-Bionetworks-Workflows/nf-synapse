@@ -9,13 +9,14 @@ process REGISTER_BUCKET {
   val   bucket
   val   base_key
   val   ready
+  val   parent_id
 
   output:
   env storage_location_id
 
   script:
   """
-  storage_location_id=\$(register_bucket.py ${bucket} ${base_key})
+  storage_location_id=\$(register_bucket.py ${bucket} ${base_key} ${parent_id})
   """
   
 }
