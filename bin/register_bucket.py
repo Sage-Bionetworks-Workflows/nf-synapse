@@ -31,14 +31,17 @@ storage_location_id = syn.createStorageLocationSetting(
 
 # Grab the current settings for the container being indexed to and add the new storage
 # location to the list of storage locations. This is necessary to ensure that the
-# current default storage location is set retained on the container.
+# current default storage location set is retained on the container.
 current_container_settings = syn.getProjectSetting(
     project=parent_id, setting_type="upload"
 )
 
 container_storage_list_needs_update = False
-has_existing_setting = current_container_settings is not None and "locations" in current_container_settings and current_container_settings[
-    "locations"]
+has_existing_setting = (
+    current_container_settings is not None
+    and "locations" in current_container_settings
+    and current_container_settings["locations"]
+)
 
 if has_existing_setting:
     storage_locations_for_container = current_container_settings["locations"]
@@ -63,7 +66,8 @@ else:
 
 if container_storage_list_needs_update:
     syn.setStorageLocation(
-        entity=parent_id, storage_location_id=storage_locations_for_container)
+        entity=parent_id, storage_location_id=storage_locations_for_container
+    )
 
 
 print(storage_location_id, end="")
