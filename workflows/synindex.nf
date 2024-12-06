@@ -50,7 +50,7 @@ include { SYNAPSE_INDEX } from '../modules/synapse_index.nf'
 workflow SYNINDEX {
   GET_USER_ID()
   UPDATE_OWNER(GET_USER_ID.output, s3_prefix)
-  REGISTER_BUCKET(bucket, base_key, UPDATE_OWNER.output, params.parent_id)
+  REGISTER_BUCKET(bucket, base_key, UPDATE_OWNER.output)
   LIST_OBJECTS(s3_prefix, bucket, params.filename_string)
   SYNAPSE_MIRROR(LIST_OBJECTS.output, s3_prefix, params.parent_id, publish_dir)
   ch_parent_ids = SYNAPSE_MIRROR.output 
