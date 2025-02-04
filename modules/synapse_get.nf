@@ -2,8 +2,6 @@
 process SYNAPSE_GET {
   label 'synapse'
 
-  publishDir "${Utils.get_publish_dir(params, syn_id)}", mode: 'copy'
-
   secret 'SYNAPSE_AUTH_TOKEN'
 
   input:
