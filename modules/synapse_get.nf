@@ -10,11 +10,11 @@ process SYNAPSE_GET {
   input:
   tuple val(syn_uri), val(syn_id)
 
-  when:
-  params.synapse_uris.size() > 0
-
   output:
   tuple val(syn_uri), val(syn_id), path("*")
+  
+  when:
+  params.synapse_uris.size() > 0
 
   script:
   """
