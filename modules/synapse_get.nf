@@ -1,6 +1,7 @@
 // Download files from Synapse
 process SYNAPSE_GET {
   label 'synapse'
+  label 'download'
 
   secret 'SYNAPSE_AUTH_TOKEN'
 
