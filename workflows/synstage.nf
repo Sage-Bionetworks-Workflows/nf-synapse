@@ -67,8 +67,6 @@ workflow SYNSTAGE {
     .map { uri, id, file -> /-e 's|\b${uri}\b|${file}|g'/ }
     .reduce { a, b -> "${a} ${b}" }
 
-    ch_stage_sed.view()
-
     // Get Workflow Run Name for Publishing
     params.name = workflow.runName
     run_name = params.name
