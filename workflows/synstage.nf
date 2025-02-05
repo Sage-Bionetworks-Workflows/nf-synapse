@@ -61,7 +61,7 @@ workflow SYNSTAGE {
    
     // Stage files
     ch_staged_files = STAGE_FILE(ch_all_files)
-    ch_staged_files.view()
+    
     // Convert Mixed URIs and staged locations into sed expressions
     ch_stage_sed = ch_staged_files
     .map { uri, id, file -> /-e 's|\b${uri}\b|${file}|g'/ }
