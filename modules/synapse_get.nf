@@ -3,6 +3,8 @@ process SYNAPSE_GET {
   label 'synapse'
   label 'download'
 
+  tag "$syn_id"
+
   secret 'SYNAPSE_AUTH_TOKEN'
 
   input:

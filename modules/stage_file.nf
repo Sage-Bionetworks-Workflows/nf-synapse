@@ -3,6 +3,8 @@ process STAGE_FILE {
     debug true
     label 'aws'
 
+    tag "$file_id"
+
     input:
     tuple val(file_uri), val(file_id), path(file)
 

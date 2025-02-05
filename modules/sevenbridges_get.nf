@@ -3,6 +3,8 @@ process SEVENBRIDGES_GET {
   label 'sevenbridges'
   label 'download'
 
+  tag "$sbg_id"
+
   secret 'SB_API_ENDPOINT'
   secret 'SB_AUTH_TOKEN'
 
