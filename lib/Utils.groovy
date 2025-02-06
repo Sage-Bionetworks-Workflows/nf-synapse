@@ -3,8 +3,8 @@
 class Utils {
     static public def get_publish_dir(params, file_id) {
         def strategy_map = [
-            "id_folders": { "${params.outdir_clean}/${file_id}/" },
-            "flat": { "${params.outdir_clean}/" }
+            "id_folders": { "${params.outdir_clean}/${file_id}" },
+            "flat": { "${params.outdir_clean}" }
             // Add more strategies as needed: "another_strategy": { "path_for_another_strategy" }
         ]
 

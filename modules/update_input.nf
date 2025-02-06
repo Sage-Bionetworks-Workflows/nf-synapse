@@ -1,7 +1,7 @@
 // Update Synapse URIs in input file with staged locations
 process UPDATE_INPUT {
-
-  label 'synapse'
+  
+  label 'aws'
   
   publishDir "${input_file.scheme}:///${params.input_parent_dir}/synstage/",  mode: 'copy'
   publishDir "${params.outdir_clean}/${run_name}/",          mode: 'copy'

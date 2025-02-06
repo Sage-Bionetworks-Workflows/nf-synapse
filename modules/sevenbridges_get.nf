@@ -1,9 +1,9 @@
 // Download files from Seven Bridges
 process SEVENBRIDGES_GET {
+  label 'sevenbridges'
+  label 'download'
 
-  container "quay.io/biocontainers/sevenbridges-python:2.9.1--pyhdfd78af_0"
-
-  publishDir "${Utils.get_publish_dir(params, sbg_id)}", mode: 'copy'
+  tag "$sbg_id"
 
   secret 'SB_API_ENDPOINT'
   secret 'SB_AUTH_TOKEN'

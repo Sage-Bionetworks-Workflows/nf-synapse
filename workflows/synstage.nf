@@ -27,6 +27,7 @@ params.sbg_uris = (input_file.text =~ 'sbg://([a-zA-Z0-9]+)').findAll()
 
 include { SYNAPSE_GET } from '../modules/synapse_get.nf'
 include { SEVENBRIDGES_GET } from '../modules/sevenbridges_get.nf'
+include { STAGE_FILE } from '../modules/stage_file.nf'
 include { UPDATE_INPUT } from '../modules/update_input.nf'
 
 /*
@@ -57,10 +58,13 @@ workflow SYNSTAGE {
 
     // Mix channels
     ch_all_files = SEVENBRIDGES_GET.output.mix(SYNAPSE_GET.output)
-
+   
+    // Stage files
+    ch_staged_files = STAGE_FILE(ch_all_files)
+    
     // Convert Mixed URIs and staged locations into sed expressions
-    ch_stage_sed = ch_all_files
-    .map { uri, id, file -> /-e 's|\b${uri}\b|${params.outdir_clean}\/${id}\/${file.name}|g'/ }
+    ch_stage_sed = ch_staged_files
+    .map { uri, id, file -> /-e 's|\b${uri}\b|${file}|g'/ }
     .reduce { a, b -> "${a} ${b}" }
 
     // Get Workflow Run Name for Publishing
