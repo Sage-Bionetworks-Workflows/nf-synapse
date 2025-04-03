@@ -1,6 +1,6 @@
 # Contributing New Workflows
 
-In order to contribute to `nf-synapse`, you will first need to either create a feature branch on the main repository (if you are a Sage Bio employee) or fork the repository and create a feature branch on your fork. Once you have a branch or fork, you can create a new workflow by following the steps below.
+In order to contribute to `nf-synapse`, you will first need to either create a feature branch on the main repository (if you are a Sage Bionetworks employee) or fork the repository. Once you have a branch or fork, you can create a new workflow by following the steps below.
 
 ## Create New Modules
 
@@ -14,33 +14,37 @@ Once you have created all of the modules necessary for your workflow, you can cr
 
 ## Add New Workflow to `main.nf`
 
-After your workflow is complete, you will need to add it to the `main.nf` file. This file provides the entrypoint for running any workflow in this repository. Follow the example set by the `NF_SYNSTAGE` workflow:
+After your workflow is complete, you will need to add it to the `main.nf` file. Follow the examples already present to provide access to your workflow given a `params.entry` value:
 1. Write a comment that describes the purpose of your workflow.
 1. Add the `include` statement to import your workflow to `main.nf`.
-1. Add your workflow to `main.nf`. Follow the naming convention of `NF_<WORKFLOW_NAME>` as shown in the example.
+1. Add your workflow to `main.nf`.
 
 Example:
 ```nextflow
 // Synstage - Stage files from Synapse to Nextflow Tower S3 Bucket
-include { SYNSTAGE } from './workflows/synstage.nf'
+include { WORKFLOW_NAME } from './workflows/workflow_name.nf'
 
-workflow NF_SYNSTAGE {
-    SYNSTAGE ()
+workflow {
+    ...
+    else if (params.entry == 'workflow_name') {
+        WORKFLOW_NAME ()
+    }
+    ...
 }
 ```
 
 ## Test Your Workflow Locally
 
-Once your workflow is added to `main.nf` with a unique name, it is now accessible to be run with the `entry` parameter. If it is possible to do so, test the workflow on your local machine using the [Nextflow CLI](https://nextflow.io/docs/latest/cli.html#run). It will be much easier to debug any problems you encounter locally before running on Nextflow Tower.
+Once your workflow is added to `main.nf` with a unique name, it is now accessible to be run with the `params.entry` parameter. If it is possible to do so, test the workflow on your local machine using the [Nextflow CLI](https://nextflow.io/docs/latest/cli.html#run). It will be much easier to debug any problems you encounter locally before running on Seqera Platform.
 Example:
 ```
-nextflow run main.nf -profile docker -entry NF_<WORKFLOW_NAME> --my_param my_param_value
+nextflow run main.nf -profile docker --entry <WORKFLOW_NAME>
 ```
 
 ## Test Your Workflow in Nextflow Tower
 
-Using the [Tower CLI](https://help.tower.nf/latest/cli/), or the [Tower Web UI](https://help.tower.nf/latest/launch/launchpad/) run your workflow and ensure that it completes successfully and with the intended results. Be sure to provide the name of your branch as the `revision`(and the URL to your fork, if applicable) to the Tower run.
+Using the [Tower CLI](https://help.tower.nf/latest/cli/), or the [Seqera Platform UI](https://help.tower.nf/latest/launch/launchpad/) run your workflow and ensure that it completes successfully and with the intended results. Be sure to provide the name of your branch as the `revision`(and the URL to your fork, if applicable) to the Tower run.
 
 ## Update The README
 
-Before submitting your pull request, update the `README.md` file to include a description of your workflow. Follow the example set by the `NF_SYNSTAGE` section and include all relavent sections.
+Before submitting your pull request, update the `README.md` file to include a description of your workflow. Follow the example set by the `SYNSTAGE` and `SYNINDEX` sections and include all relavent information.
