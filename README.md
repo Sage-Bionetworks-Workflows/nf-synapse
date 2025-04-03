@@ -115,10 +115,9 @@ Note: `SYNSTAGE` can handle either or both types of URIs in a single input file.
 
 Check out the [Quickstart](#Quickstart:SYNSTAGE) section for example parameter values.
 
+- **`entry`**: (Required) The name of the workflow to run (`synstage`). This should be the name of the workflow file in the `workflows/` directory.
 - **`input`**: (Required) A text file containing Synapse URIs (_e.g._ `syn://syn28521174`). The text file can have any format (_e.g._ a single column of Synapse URIs, a CSV/TSV sample sheet for an nf-core workflow).
-
 - **`outdir`**: (Optional) An output location where the Synapse files will be staged. Currently, this location must be an S3 prefix for Nextflow Tower runs. If not provided, this will default to the parent directory of the input file.
-
 - **`save_strategy`**: (Optional) A string indicating where to stage the files within the `outdir`. Options include:
     - `id_folders`: Files will be staged in child folders named after the Synapse or Seven Bridges ID of the file. This is the default behavior.
     - `flat`: Files will be staged in top level of the `outdir`.
@@ -175,6 +174,7 @@ The examples below demonstrate how you would index files from an S3 bucket calle
 
 Check out the [Quickstart](#Quickstart:SYNINDEX) section for example parameter values.
 
+- **`entry`**: (Required) The name of the workflow to run (`synindex`). This should be the name of the workflow file in the `workflows/` directory.
 - **`s3_prefix`**: (Required) The S3 URI of the S3 bucket that contains the files to be indexed.
 - **`parent_id`**: (Required) The Synapse ID of the Synapse project or folder that the files will be indexed into.
 - **`filename_string`**: (Optional) A string that will be matched against the names of the files in the S3 bucket. If provided, only files that contain the string will be indexed.
