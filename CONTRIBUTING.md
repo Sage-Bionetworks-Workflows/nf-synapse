@@ -6,7 +6,9 @@ In order to contribute to `nf-synapse`, you will first need to either create a f
 
 Before you create any new modules, be sure to look at those that already exist in the `modules/` directory. You may find that you can reuse or modify an existing module rather than creating a new one.
 
-Based on the purpose of your workflow, you may need to create one or more modules. In this repository, a module is a [Nextflow process](https://nextflow.io/docs/latest/process.html) that performs a single task. For example, a module may be responsible for downloading a file from Synapse like in the `SYNAPSE_GET` module and emitting it's downloaded path. Create any modules necessary for your workflow and store them as individual `.nf` files with names that are lowercase representations of the name of the process you are creating.
+Based on the purpose of your workflow, you may need to create one or more modules. In this repository, a module is a [Nextflow process](https://nextflow.io/docs/latest/process.html) that performs a single task. For example, a module may be responsible for downloading a file from Synapse like in the `SYNAPSE_GET` module and emitting it's downloaded path. To perform a complex task, or utilize existing tools and programming languages, you can provide an executable script in the `bin/` directory and call it from your module. See the `GET_USER_ID` [module](https://github.com/Sage-Bionetworks-Workflows/nf-synapse/blob/5293271e65e6af67763c21c4c0d3b947ca5101d2/modules/get_user_id.nf) for an example where the Synapse Python client is used to retrieve information about the current user.
+
+Create any modules necessary for your workflow and store them as individual `.nf` files with names that are lowercase representations of the name of the process you are creating.
 
 ## Create New Workflow
 
