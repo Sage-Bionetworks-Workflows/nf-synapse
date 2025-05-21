@@ -51,4 +51,4 @@ After you have tested your workflow, be sure to test any other workflows that de
 
 ## Update The README
 
-Before submitting your pull request, update the `README.md` file to include a description of your workflow. Follow the example set by the `SYNSTAGE` and `SYNINDEX` sections and include all relavent information.
+Before submitting your pull request, update the `README.md` file to include a description of your workflow. Follow the example set by the `SYNSTAGE` and `SYNINDEX` sections and include all relavent information including a mermaid diagram describing the flow of data through the workflow.
