@@ -4,9 +4,11 @@ In order to contribute to `nf-synapse`, you will first need to either create a f
 
 ## Create New Modules
 
-Before you begin creating any new modules, be sure to look at those that already exist in the `modules/` directory. You may find that you can reuse an existing module rather than creating a new one.
+Before you create any new modules, be sure to look at those that already exist in the `modules/` directory. You may find that you can reuse or modify an existing module rather than creating a new one.
 
-Based on the purpose of your workflow, you may need to create one or more modules. In this repository, a module is a [Nextflow process](https://nextflow.io/docs/latest/process.html) that performs a single task. For example, a module may be responsible for downloading a file from Synapse like in the `SYNAPSE_GET` module. Create any modules necessary for your workflow and store them as individual `.nf` files with names that are lowercase representations of the name of the process you are creating.
+Based on the purpose of your workflow, you may need to create one or more modules. In this repository, a module is a [Nextflow process](https://nextflow.io/docs/latest/process.html) that performs a single task. For example, a module may be responsible for downloading a file from Synapse like in the `SYNAPSE_GET` module and emitting it's downloaded path. To perform a complex task, or utilize existing tools and programming languages, you can provide an executable script in the `bin/` directory and call it from your module. See the `GET_USER_ID` [module](https://github.com/Sage-Bionetworks-Workflows/nf-synapse/blob/5293271e65e6af67763c21c4c0d3b947ca5101d2/modules/get_user_id.nf) for an example where the Synapse Python client is used to retrieve information about the current user.
+
+Create any modules necessary for your workflow and store them as individual `.nf` files with names that are lowercase representations of the name of the process you are creating.
 
 ## Create New Workflow
 
@@ -45,6 +47,10 @@ nextflow run main.nf -profile docker --entry <WORKFLOW_NAME>
 
 Using the [Tower CLI](https://help.tower.nf/latest/cli/), or the [Seqera Platform UI](https://help.tower.nf/latest/launch/launchpad/) run your workflow and ensure that it completes successfully and with the intended results. Be sure to provide the name of your branch as the `revision`(and the URL to your fork, if applicable) to the Tower run.
 
+## Test Other Potentially Affected Workflows
+
+After you have tested your workflow, be sure to test any other workflows that depend on the modules you have modified. This will help ensure that the changes you made do not have any unintended side effects.
+
 ## Update The README
 
-Before submitting your pull request, update the `README.md` file to include a description of your workflow. Follow the example set by the `SYNSTAGE` and `SYNINDEX` sections and include all relavent information.
+Before submitting your pull request, update the `README.md` file to include a description of your workflow. Follow the example set by the `SYNSTAGE` and `SYNINDEX` sections and include all relavent information including a mermaid diagram describing the flow of data through the workflow.

@@ -4,20 +4,20 @@ A centralized repository of Nextflow workflows that interact with [Synapse](http
 
 ## Purpose
 
-The purpose of this repository is to provide a collection of Nextflow workflows that interact with Synapse by leveraging the [Synapse Python Client](https://github.com/Sage-Bionetworks/synapsePythonClient). These workflows are intended to be used in a [Seqera Platform](https://docs.seqera.io/platform/latest/) environment primarily, but they can also be executed using the [Nextflow CLI](https://nextflow.io/docs/latest/cli.html#run) on your local machine.
+The purpose of this repository is to provide a collection of Nextflow workflows that interact with Synapse by leveraging the [Synapse Python Client](https://python-docs.synapse.org/en/stable/). These workflows are intended to be used in a [Seqera Platform](https://docs.seqera.io/platform/latest/) environment primarily, but they can also be executed using the [Nextflow CLI](https://nextflow.io/docs/latest/cli.html#run) on your local machine.
 
 ## Structure
 
 This repository is organized as follows:
 1. Individual process definitions, or modules, are stored in the `modules/` directory.
-1. Modules are then combined into workflows, stored in the `workflows/` directory. These workflows are intended to capture the entire process of an interaction with Synapse.
-1. Workflows are then imported into the `main.nf` script, and can be run only by specifying the `params.entry` parameter.
+1. Modules are then combined into workflows, which are stored in the `workflows/` directory. These workflows are intended to capture the entire process of an interaction with Synapse.
+1. Workflows are then imported into the `main.nf` script, and can be run by specifying the `params.entry` parameter.
 
 ## Usage
 
-Only one workflow can be used per `nf-synapse` run. The configuration for a workflow run will need to include which workflow you intend to use (indicated by specifying `params.entry`), along with all of the parameters required for that workflow.
+Only one workflow can be used per `nf-synapse` run. The configuration for a workflow run will need to include which workflow you intend to use (indicated by specifying `params.entry`), along with all of the parameters required for that specific workflow.
 
-In the example below, we provide the `params.entry` parameter `synstage` to indicate that we want to run the `SYNSTAGE` workflow. We also provide the `input` parameter, which is required for `SYNSTAGE`.
+In the example below, we provide the `params.entry` parameter `synstage` to indicate that we want to run the `SYNSTAGE` workflow. We also provide `params.input`, which is required for `SYNSTAGE`.
 
 ```
 nextflow run main.nf -profile docker --entry synstage --input path/to/input.csv
@@ -25,7 +25,7 @@ nextflow run main.nf -profile docker --entry synstage --input path/to/input.csv
 
 ## Meta-Usage
 
-`nf-synapse` is designed to be used on either side of a general-purpose Nextflow Workflow to stage input files from Synapse or SevenBridges to an S3 bucket, run a workflow of your choosing, and then index the output files from the S3 bucket back into Synapse. 
+`nf-synapse` is designed to be used in conjunction with a general-purpose Nextflow Workflow to stage input files from Synapse or SevenBridges to an S3 bucket, run a workflow of your choosing, and then index the output files from the S3 bucket back into Synapse. 
 
 ```mermaid
 flowchart LR;
@@ -46,7 +46,7 @@ All included workflows require a `SYNAPSE_AUTH_TOKEN` secret. You can generate a
 ### Profiles
 
 Current `profiles` included in this repository are:
-1. `docker`: Indicates that you want to run the workflow using Docker for running process containers.
+1. `docker`: Indicates that you want to run the workflow using Docker for running process containers (default behavior in Seqera Platform runs).
 1. `conda`: Indicates that you want to use a `conda` environment for running process containers.
 1. `synstage`: Indicates that you want to run the `SYNSTAGE` workflow (sets `params.entry = 'synstage'`).
 1. `synindex`: Indicates that you want to run the `SYNINDEX` workflow (sets `params.entry = 'synindex'`).
@@ -57,7 +57,7 @@ Current `profiles` included in this repository are:
 
 ### Purpose
 
-The purpose of this workflow is to automate the process of staging Synapse and SevenBridges files to a Seqera Platform-accessible location (_e.g._ an S3 bucket). In turn, these staged files can be used as input for a general-purpose (_e.g._ nf-core) workflow that doesn't contain platform-specific steps for staging data. This workflow is intended to be run first in preparation for other data processing workflows.
+The purpose of this workflow is to automate the process of staging Synapse and SevenBridges files to a Seqera Platform-accessible location (_e.g._ an S3 bucket). In turn, these staged files can be used as input for a general-purpose (_e.g._ nf-core) workflow that doesn't contain platform-specific steps for staging data.
 
 ### Overview
 
@@ -68,11 +68,25 @@ The purpose of this workflow is to automate the process of staging Synapse and S
 1. Replace the URIs in the text file with their staged locations.
 1. Output the updated text file so it can serve as input for another workflow.
 
+#### Workflow Diagram
+```mermaid
+flowchart LR
+    A[Input File] --> B[Extract URIs]
+    B --> C1[Synapse URIs]
+    B --> C2[SevenBridges URIs]
+    C1 --> D1[SYNAPSE_GET]
+    C2 --> D2[SEVENBRIDGES_GET]
+    D1 --> E[STAGE_FILE]
+    D2 --> E
+    E --> F[UPDATE_INPUT]
+    F --> G[Updated Input File]
+```
+
 ### Quickstart: SYNSTAGE
 
 The examples below demonstrate how you would stage Synapse files in an S3 bucket called `example-bucket`, but they can be adapted for other storage backends.
 
-1. Prepare your input file containing the Synapse URIs. For example, the following CSV file follows the format required for running the [`nf-core/rnaseq`](https://nf-co.re/rnaseq/latest/usage) workflow.
+1. Prepare your input file containing Synapse and/or SevenBridges URIs and stage it to the S3 bucket that you want all files to be uploaded to. This example CSV file follows the format required for running the [`nf-core/rnaseq`](https://nf-co.re/rnaseq/latest/usage) workflow.
 
     **Example:** Uploaded to `s3://example-bucket/input.csv`
 
@@ -144,11 +158,25 @@ The purpose of this workflow is to parallelize the process of indexing files in 
 1. Recreates the folder structure of the S3 bucket in the Synapse project.
 1. Indexes the files in the S3 bucket into the Synapse project.
 
+#### Workflow Diagram
+
+```mermaid
+flowchart LR
+    A[S3 Files] --> B[GET_USER_ID]
+    B --> C[UPDATE_OWNER]
+    C --> D[REGISTER_BUCKET]
+    A --> E[LIST_OBJECTS]
+    E --> F[SYNAPSE_MIRROR]
+    F --> G[SYNAPSE_INDEX]
+    D --> G
+    G --> H[Output CSV]
+```
+
 ### Quickstart:SYNINDEX
 
 The examples below demonstrate how you would index files from an S3 bucket called `example-bucket` into Synapse.
 
-1. Prepare your S3 bucket by setting the output directory of your general-purpose workflow to a Nextflow Tower S3 bucket. Ideally, you want this S3 bucket to be persistent (not a `scratch` bucket) so that your files will remain accessible indefinitely.
+1. Prepare your S3 bucket by setting the output directory of your general-purpose workflow to a Nextflow Tower S3 bucket. Ideally, you want this S3 bucket to be persistent (not a `-scratch` bucket) so that your files will remain accessible indefinitely.
 
     **Example:** `s3://example-bucket` file structure:
     ```
@@ -168,7 +196,7 @@ The examples below demonstrate how you would index files from an S3 bucket calle
     nextflow run main.nf -profile docker --entry synindex --s3_prefix s3://example-bucket --parent_id syn12345678
     ```
 
-1. Retrieve the output file, which by default is stored in a `S3://example-bucket/synindex/under-syn12345678/` in our example. This folder will contain a mapping of Synapse URIs to their indexed Synapse IDs.
+1. Retrieve the output file, which by default is stored in `S3://example-bucket/synindex/under-syn12345678/` in our example. This folder will contain a mapping of Synapse URIs to their indexed Synapse IDs.
 
 ### Parameters
 
