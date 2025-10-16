@@ -9,7 +9,7 @@ nextflow.enable.dsl = 2
 // Need default file or SYNINDEX cannot be run
 params.input = "${projectDir}/dummy.txt"
 input_file = file(params.input)
-workdir = "${workDir.parent}/${workDir.name}"
+workdir = workDir.parent ? "${workDir.parent}/${workDir.name}" : "${workDir.name}"
 params.outdir = "${workDir.scheme}://${workdir}/synstage/"
 params.outdir_clean = params.outdir.replaceAll('/$', '')
 params.input_parent_dir = input_file.parent
