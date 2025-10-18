@@ -12,13 +12,12 @@ process UPDATE_OWNER {
 
   script:
   """
-  echo $user_id | aws s3 cp - ${s3_prefix}/owner.txt
-  // ( \
-  //    ( aws s3 cp ${s3_prefix}/owner.txt - 2>/dev/null || true ); \
-  //     echo $user_id \
-  // ) \
-  // | sort -u \
-  // | aws s3 cp - ${s3_prefix}/owner.txt
+  ( \
+     ( aws s3 cp ${s3_prefix}/owner.txt - 2>/dev/null || true ); \
+      echo $user_id \
+  ) \
+  | sort -u \
+  | aws s3 cp - ${s3_prefix}/owner.txt
   """
 
 }
