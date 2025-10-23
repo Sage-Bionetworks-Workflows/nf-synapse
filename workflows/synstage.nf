@@ -11,7 +11,14 @@ params.input = "${projectDir}/dummy.txt"
 input_file = file(params.input)
 workdir = "${workDir.parent}/${workDir.name}"
 params.outdir = "${workDir.scheme}://${workdir}/synstage/"
-params.outdir_clean = params.outdir.replaceAll('/$', '')
+
+// Use URI parsing to clean up redundant slashes safely from path
+uri = new URI(params.outdir)
+// Remove leading slash, duplicate slashes, and trailing slash, in that order!
+normalized_path = uri.path.replaceAll('^/', '').replaceAll('/+', '/').replaceAll('/$', '')
+// Compose the final cleaned up outdir
+params.outdir_clean = "${uri.scheme}://${normalized_path}"
+
 params.input_parent_dir = input_file.parent
 params.save_strategy = "id_folders"
 // Parse Synapse URIs from input file
