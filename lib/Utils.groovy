@@ -9,7 +9,7 @@ class Utils {
 
         // First ensure we have the required URI components
         if (!uri.scheme) {
-            throw new Exception("There must be a scheme in the URI (e.g., s3://")
+            throw new Exception("There must be a scheme in the URI (e.g., s3://)")
         }
 
         if (!uri.authority && !uri.path) {
