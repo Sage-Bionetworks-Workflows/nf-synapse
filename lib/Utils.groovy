@@ -12,10 +12,6 @@ class Utils {
             throw new Exception("There must be a scheme in the URI (e.g., s3://)")
         }
 
-        if (!uri.authority && !uri.path) {
-            throw new Exception("URI must have either authority or path (e.g., s3://<authority>/<path> or s3:///<path>)")
-        }
-
         // Combine authority and path based on URI structure
         def fullPath
         if (uri.authority) {
