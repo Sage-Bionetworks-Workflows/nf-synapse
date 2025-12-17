@@ -14,12 +14,6 @@ params.outdir = "${workDir.scheme}://${workDir.resolve('synstage')}"
 // Clean up the output directory URI
 params.outdir_clean = Utils.clean_uri(params.outdir)
 
-// TODO: Debug logging to understand how the default build of outdir was ever able to work - remove later
-log.info "params.input: ${params.input}"
-log.info "params.outdir: ${params.outdir}"
-log.info "params.outdir_clean: ${params.outdir_clean}"
-log.info "workDir: ${workDir}"
-
 params.input_parent_dir = input_file.parent
 params.save_strategy = "id_folders"
 // Parse Synapse URIs from input file
