@@ -9,9 +9,7 @@ nextflow.enable.dsl = 2
 // Need default file or SYNINDEX cannot be run
 params.input = projectDir.resolve('dummy.txt')
 input_file = file(params.input)
-// TODO: Can't we just use workDir? (check logs)
-workdir = workDir.parent.resolve(workDir.name)
-params.outdir = "${workDir.scheme}://${workdir.resolve('synstage')}"
+params.outdir = "${workDir.scheme}://${workDir.resolve('synstage')}"
 
 // Clean up the output directory URI
 params.outdir_clean = Utils.clean_uri(params.outdir)
