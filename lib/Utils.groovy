@@ -7,17 +7,27 @@ class Utils {
         // Use URI parsing to clean up redundant slashes while preserving all URI components
         def uri = new URI(outdir)
 
-        // Clean up the path by removing duplicate slashes and trailing slash
-        def cleanPath = (uri.path ?: '').replaceAll('/+', '/').replaceAll('/$', '')
-
-        // Build clean URI based on whether it has authority (bucket name) or not
-        if (uri.authority) {
-            // Example: s3://bucket/path (bucket is authority, path is path)
-            return "${uri.scheme}://${uri.authority}${cleanPath.startsWith('/') ? cleanPath : '/' + cleanPath}"
-        } else {
-            // Example: s3:///bucket/path (bucket is part of path, no authority)
-            return "${uri.scheme}://${cleanPath.replaceAll('^/', '')}"
+        // First ensure we have the required URI components
+        if (!uri.scheme) {
+            throw new Exception("There must be a scheme in the URI (e.g., s3://")
         }
+
+        if (!uri.authority && !uri.path) {
+            throw new Exception("URI must have either authority or path (e.g., s3://<authority>/<path> or s3:///<path>)")
+        }
+
+        // Combine authority and path based on URI structure
+        def fullPath
+        if (uri.authority) {
+            fullPath = uri.authority + (uri.path ?: '')
+        } else {
+            fullPath = uri.path ?: ''
+        }
+
+        // Remove leading, trailing, and duplicate slashes from fullPath before returning
+        def normalizedPath = fullPath.replaceAll('^/+', '').replaceAll('/+', '/').replaceAll('/+$', '')
+
+        return "${uri.scheme}://${normalizedPath}"
     }
 
     static public def get_publish_dir(params, file_id) {
