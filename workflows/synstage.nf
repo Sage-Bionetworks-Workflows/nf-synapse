@@ -19,6 +19,13 @@ normalized_path = uri.path.replaceAll('^/', '').replaceAll('/+', '/').replaceAll
 // Compose the final cleaned up outdir
 params.outdir_clean = "${uri.scheme}://${normalized_path}"
 
+// TODO: Debug logging to understand how the default build of outdir was ever able to work - remove later
+log.info "params.input: ${params.input}"
+log.info "params.outdir: ${params.outdir}"
+log.info "uri.path: ${uri.path}"
+log.info "uri.authority: ${uri.authority}"
+log.info "params.outdir_clean: ${params.outdir_clean}"
+
 params.input_parent_dir = input_file.parent
 params.save_strategy = "id_folders"
 // Parse Synapse URIs from input file
