@@ -131,7 +131,7 @@ Check out the [Quickstart](#Quickstart:SYNSTAGE) section for example parameter v
 
 - **`entry`**: (Required) The name of the workflow to run (`synstage`). This should be the name of the workflow file in the `workflows/` directory.
 - **`input`**: (Required) A text file containing Synapse URIs (_e.g._ `syn://syn28521174`). The text file can have any format (_e.g._ a single column of Synapse URIs, a CSV/TSV sample sheet for an nf-core workflow).
-- **`outdir`**: (Optional) An output location where the Synapse files will be staged. Currently, this location must be an S3 prefix for Nextflow Tower runs (_e.g._ `s3://bucket_name/path/to/file`). If not provided, this will default to the parent directory of the input file.
+- **`outdir`**: (Optional) An output location where the Synapse files will be staged. Currently, this location must be an S3 prefix for Nextflow Tower runs (_e.g._ `s3://bucket_name/path/to/file`). If not provided, this will default to the work directory of your machine if running locally, or a subdirectory called `systage` within the work directory of the Seqera Platform workspace in which your workflow will run (e.g. `s3://<bucket>/synstage/<path-to-file-based-on-save-strategy-parameter>`).
 - **`save_strategy`**: (Optional) A string indicating where to stage the files within the `outdir`. Options include:
     - `id_folders`: Files will be staged in child folders named after the Synapse or Seven Bridges ID of the file. This is the default behavior.
     - `flat`: Files will be staged in top level of the `outdir`.
