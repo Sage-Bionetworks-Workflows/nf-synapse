@@ -32,8 +32,6 @@ jobs:
         uses: nf-core/setup-nextflow@v2
 
       - name: Run Utils unit tests
-        env:
-          NXF_VER: "24.10.4"
         run: |
           nextflow -version
           nextflow run tests/test_utils.nf -lib ./lib -ansi-log false

@@ -22,11 +22,6 @@ workflow {
   // ----------------------------
   // S3 scheme + bucket/path
   // ----------------------------
-  check("clean_uri: expected ") {
-    def got = Utils.clean_uri('s3:///home/ec2-user/nf-synapse/work/synstage/')
-    assert got == 's3://example-bucket/some_test_dir' : "got=${got}"
-  }
-
   check("clean_uri: preserves bucket/path and strips trailing slash") {
     def got = Utils.clean_uri('s3://example-bucket/some_test_dir/')
     assert got == 's3://example-bucket/some_test_dir' : "got=${got}"
