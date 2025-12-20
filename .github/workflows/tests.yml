@@ -3,8 +3,12 @@ name: nextflow-tests
 
 on:
   push:
+    paths-ignore:
+      - '**.md'
   pull_request:
     types: [opened, reopened]
+    paths-ignore:
+      - '**.md'
 
 env:
   NXF_VER: "24.10.9"
