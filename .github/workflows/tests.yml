@@ -31,17 +31,6 @@ jobs:
       - name: Set up Nextflow
         uses: nf-core/setup-nextflow@v2
 
-      # Speed up repeated runs
-      - name: Cache Nextflow
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.nextflow
-            ~/.nf-core
-          key: ${{ runner.os }}-nextflow-${{ hashFiles('**/nextflow.config', '**/nextflow.yml', '**/modules/**', '**/lib/**', '**/tests/**') }}
-          restore-keys: |
-            ${{ runner.os }}-nextflow-
-
       - name: Run Utils unit tests
         env:
           NXF_VER: "24.10.4"
