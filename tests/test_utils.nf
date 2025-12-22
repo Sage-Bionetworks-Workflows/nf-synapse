@@ -38,6 +38,14 @@ workflow {
   }
 
   // ----------------------------
+  // S3 scheme + path (this is how the default outdir is formed)
+  // ----------------------------
+  check("clean_uri: converts s3:///path to s3://bucket/path") {
+    def got = Utils.clean_uri('s3:///example-bucket/some_test_dir/')
+    assert got == 's3://example-bucket/some_test_dir' : "got=${got}"
+  }
+
+  // ----------------------------
   // Bucket-only forms
   // ----------------------------
   check("clean_uri: bucket-only (no trailing slash)") {
