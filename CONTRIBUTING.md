@@ -51,6 +51,20 @@ Using the [Tower CLI](https://help.tower.nf/latest/cli/), or the [Seqera Platfor
 
 After you have tested your workflow, be sure to test any other workflows that depend on the modules you have modified. This will help ensure that the changes you made do not have any unintended side effects.
 
+## Running Unit Tests
+
+We have a [Github CI/CD test workflow](/.github/workflows/tests.yml) that will run automatically unit tests in the `tests/` directory as you are developing and pushing changes upstream.
+
+If you want to run the tests **locally**, follow [official Nextflow instructions to setup Nextflow and Java locally on your computer](https://www.nextflow.io/docs/latest/install.html).
+
+Then run the following in your terminal/session:
+
+```bash
+nextflow run tests/<test_script_name> -lib ./lib
+```
+
+
+
 ## Update The README
 
 Before submitting your pull request, update the `README.md` file to include a description of your workflow. Follow the example set by the `SYNSTAGE` and `SYNINDEX` sections and include all relavent information including a mermaid diagram describing the flow of data through the workflow.

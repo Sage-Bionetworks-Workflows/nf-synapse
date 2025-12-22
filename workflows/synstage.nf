@@ -7,17 +7,12 @@ nextflow.enable.dsl = 2
 ========================================================================================
 */
 // Need default file or SYNINDEX cannot be run
-params.input = "${projectDir}/dummy.txt"
+params.input = projectDir.resolve('dummy.txt')
 input_file = file(params.input)
-workdir = "${workDir.parent}/${workDir.name}"
-params.outdir = "${workDir.scheme}://${workdir}/synstage/"
+params.outdir = "${workDir.scheme}://${workDir.resolve('synstage')}"
 
-// Use URI parsing to clean up redundant slashes safely from path
-uri = new URI(params.outdir)
-// Remove leading slash, duplicate slashes, and trailing slash, in that order!
-normalized_path = uri.path.replaceAll('^/', '').replaceAll('/+', '/').replaceAll('/$', '')
-// Compose the final cleaned up outdir
-params.outdir_clean = "${uri.scheme}://${normalized_path}"
+// Clean up the output directory URI
+params.outdir_clean = Utils.clean_uri(params.outdir)
 
 params.input_parent_dir = input_file.parent
 params.save_strategy = "id_folders"
