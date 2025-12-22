@@ -1,0 +1,37 @@
+# .github/workflows/tests.yml
+name: nextflow-tests
+
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    types: [opened, reopened]
+    paths-ignore:
+      - '**.md'
+
+env:
+  NXF_VER: "24.10.9"
+
+jobs:
+  utils-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # Installs Nextflow and caches its download + plugins.
+      - name: Set up Nextflow
+        uses: nf-core/setup-nextflow@v2
+
+      - name: Run Utils unit tests
+        run: |
+          nextflow -version
+          nextflow run tests/test_utils.nf -lib ./lib -ansi-log false
