@@ -10,11 +10,11 @@ process SYNAPSE_INDEX {
   val   storage_id
 
   output:
-  env file_info
+  path 'file_info.csv'
 
   script:
   """
-  file_info=\$(synapse_index.py ${storage_id} ${object} '${uri}' ${parent_id})
+  synapse_index.py ${storage_id} ${object} '${uri}' ${parent_id}
   """
 
 }
