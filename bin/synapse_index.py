@@ -4,6 +4,7 @@ import csv
 import os
 import re
 import sys
+from typing import Dict
 
 import synapseclient
 from synapseclient.models import File
@@ -67,7 +68,7 @@ def create_file_handle(
     return file_handle["id"]
 
 
-def write_mapping(mapping_file: str, row: dict) -> None:
+def write_mapping(mapping_file: str, row: Dict[str, str]) -> None:
     """Writes the S3 URI to Synapse ID mapping for a single indexed file.
 
     Arguments:
