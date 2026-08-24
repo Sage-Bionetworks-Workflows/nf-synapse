@@ -2,6 +2,33 @@
 
 A centralized repository of Nextflow workflows that interact with [Synapse](https://www.synapse.org/).
 
+## Table of Contents
+
+- [Purpose](#purpose)
+- [Structure](#structure)
+- [Usage](#usage)
+- [Meta-Usage](#meta-usage)
+- [Authentication](#authentication)
+  - [Synapse](#synapse)
+  - [Profiles](#profiles)
+- [Included Workflows](#included-workflows)
+  - [`SYNSTAGE`: Stage Synapse Files To AWS S3](#synstage-stage-synapse-files-to-aws-s3)
+    - [Purpose](#purpose-1)
+    - [Overview](#overview)
+    - [Workflow Diagram](#workflow-diagram)
+    - [Quickstart: SYNSTAGE](#quickstart-synstage)
+    - [Special Considerations for Staging Seven Bridges Files](#special-considerations-for-staging-seven-bridges-files)
+    - [Parameters](#parameters)
+    - [Known Limitations](#known-limitations)
+  - [`SYNINDEX`: Index S3 Objects Into Synapse](#synindex-index-s3-objects-into-synapse)
+    - [Purpose](#purpose-2)
+    - [Overview](#overview-1)
+    - [Workflow Diagram](#workflow-diagram-1)
+    - [Quickstart: SYNINDEX](#quickstart-synindex)
+    - [Outputs](#outputs)
+    - [Parameters](#parameters-1)
+    - [Known Limitations](#known-limitations-1)
+
 ## Purpose
 
 The purpose of this repository is to provide a collection of Nextflow workflows that interact with Synapse by leveraging the [Synapse Python Client](https://python-docs.synapse.org/en/stable/). These workflows are intended to be used in a [Seqera Platform](https://docs.seqera.io/platform/latest/) environment primarily, but they can also be executed using the [Nextflow CLI](https://nextflow.io/docs/latest/cli.html#run) on your local machine.
@@ -197,6 +224,37 @@ The examples below demonstrate how you would index files from an S3 bucket calle
     ```
 
 1. Retrieve the output file, which by default is stored in `S3://example-bucket/synindex/under-syn12345678/` in our example. This folder will contain a mapping of Synapse URIs to their indexed Synapse IDs.
+
+### Outputs
+
+`SYNINDEX` writes `output.csv` to `${s3_prefix}/synindex/under-${parent_id}/` (`s3://example-bucket/synindex/under-syn12345678/output.csv` in the example above). It is a CSV with one row per indexed file, intended to be consumed by downstream processes such as provenance tracking containing the following metadata:
+
+| Column | Description |
+| --- | --- |
+| `object_uri` | S3 URI of the source object |
+| `synapse_id` | Synapse ID of the File entity the object was indexed as |
+| `parent_id` | Synapse ID of the folder (or project) the File was created in |
+| `file_handle_id` | ID of the external S3 file handle backing the File |
+| `content_md5` | MD5 checksum of the object |
+| `file_name` | Name of the File entity |
+
+**Example:**
+
+| object_uri                                   | synapse_id | parent_id     | file_handle_id | content_md5                        | file_name   |
+| -------------------------------------------- | ---------- | ------------- | -------------: | ---------------------------------- | ----------- |
+| `s3://example-bucket/test.txt`               | `syn111`   | `syn12345678` |         `7788` | `d41d8cd98f00b204e9800998ecf8427e` | `test.txt`  |
+| `s3://example-bucket/child_folder/test1.txt` | `syn112`   | `syn22222222` |         `7789` | `e99a18c428cb38d5f260853678922e03` | `test1.txt` |
+
+**NOTE** It's recommended to read the file with a real CSV parser rather than splitting on commas AND look rows up by `object_uri`. For example, in Python:
+
+```python
+import csv
+
+with open("output.csv") as infile:
+    uri_to_synapse_id = {
+        row["object_uri"]: row["synapse_id"] for row in csv.DictReader(infile)
+    }
+```
 
 ### Parameters
 
