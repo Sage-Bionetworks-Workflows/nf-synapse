@@ -37,6 +37,8 @@ jobs:
           nextflow run tests/test_utils.nf -lib ./lib -ansi-log false
 
       - name: Run python unit tests
+        env:
+          PYTHONPATH: ${{ github.workspace }}/bin
         run: |
           pip install pytest
           pytest tests
