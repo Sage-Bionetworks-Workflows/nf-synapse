@@ -35,3 +35,8 @@ jobs:
         run: |
           nextflow -version
           nextflow run tests/test_utils.nf -lib ./lib -ansi-log false
+
+      - name: Run python unit tests
+        run: |
+          pip install pytest
+          pytest tests
