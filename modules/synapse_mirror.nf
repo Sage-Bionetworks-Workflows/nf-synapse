@@ -5,15 +5,13 @@ process SYNAPSE_MIRROR {
 
   secret 'SYNAPSE_AUTH_TOKEN'
 
-  publishDir "${publish_dir}", mode: 'copy'
-  
-
   input:
   path  objects
   val   s3_prefix
   val   parent_id
-  val   publish_dir
 
+  // Internal hand-off to SYNAPSE_INDEX only; the published mapping of this
+  // workflow is `output.csv`, which carries these columns plus the Synapse IDs.
   output:
   path  'parent_ids.csv'
 
