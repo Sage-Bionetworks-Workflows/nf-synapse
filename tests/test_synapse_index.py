@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from synapse_index import (
+from bin.synapse_index import (
     MAPPING_FIELDS,
     clean_file_name,
     create_file_handle,
